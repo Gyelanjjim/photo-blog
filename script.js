@@ -1,7 +1,7 @@
 const generateBtn = document.querySelector("#generateBtn");
 const gridContainer = document.querySelector("#gridContainer");
 const progressBar = document.querySelector("#progressBar");
-const max = 10;
+const max = 8;
 
 generateBtn.addEventListener("click", () => {
   const gridConLength = gridContainer.children.length;
@@ -30,18 +30,56 @@ generateBtn.addEventListener("click", () => {
 });
 
 function createImage(callback) {
+  const imgContainer = document.createElement("div");
+  imgContainer.classList.add("imgContainer");
+  //   const btnContainer = document.createElement("div");
   const img = document.createElement("img");
   const randomNumber = Math.floor(Math.random() * 1000) + 1;
   const url = `https://picsum.photos/id/${randomNumber}/1536/804?random=${Date.now()}`;
   img.src = url;
   img.addEventListener("load", () => {
-    gridContainer.appendChild(img);
+    imgContainer.appendChild(img);
+
+    const actionsContainer = document.createElement("div");
+    actionsContainer.classList.add("imageActions");
+
+    const saveButton = document.createElement("a");
+    saveButton.className = "btn";
+    saveButton.textContent = "다운로드";
+    saveButton.id = "downloadLink";
+    saveButton.addEventListener("click", () => {
+      downloadImage(url);
+    });
+
+    const editButton = document.createElement("a");
+    editButton.className = "btn";
+    editButton.textContent = "수정";
+
+    actionsContainer.appendChild(saveButton);
+    actionsContainer.appendChild(editButton);
+    imgContainer.appendChild(actionsContainer);
+
+    gridContainer.appendChild(imgContainer);
+
     callback();
   });
   img.addEventListener("error", () => {
     img.remove();
     createImage(callback);
   });
+}
+
+function downloadImage(url) {
+  fetch(url)
+    .then((response) => response.blob())
+    .then((blob) => {
+      const downloadLink = document.getElementById("downloadLink");
+      downloadLink.href = URL.createObjectURL(blob);
+      downloadLink.download = "";
+    })
+    .catch((error) => {
+      console.error("Error occurred while downloading the image:", error);
+    });
 }
 
 function updateProgressBar(percentage) {

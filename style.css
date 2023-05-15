@@ -21,6 +21,21 @@ main {
   padding: 40px;
 }
 
+a.btn {
+  display: block;
+  width: 80px;
+  line-height: 30px;
+  text-align: center;
+  background-color: #222;
+  color: #fff;
+  cursor: pointer;
+  text-decoration: none;
+}
+a.btn:hover {
+  background-color: greenyellow;
+  color: black;
+}
+
 .container {
   display: flex;
   justify-content: center;
@@ -32,6 +47,7 @@ main {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
   gap: 16px;
+  position: relative;
 }
 
 img {
