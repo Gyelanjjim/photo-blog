@@ -32,7 +32,6 @@ generateBtn.addEventListener("click", () => {
 function createImage(callback) {
   const imgContainer = document.createElement("div");
   imgContainer.classList.add("imgContainer");
-  //   const btnContainer = document.createElement("div");
   const img = document.createElement("img");
   const randomNumber = Math.floor(Math.random() * 1000) + 1;
   const url = `https://picsum.photos/id/${randomNumber}/1536/804?random=${Date.now()}`;
@@ -41,14 +40,15 @@ function createImage(callback) {
     imgContainer.appendChild(img);
 
     const actionsContainer = document.createElement("div");
-    actionsContainer.classList.add("imageActions");
+    actionsContainer.classList.add("actionsContainer");
 
     const saveButton = document.createElement("a");
     saveButton.className = "btn";
     saveButton.textContent = "다운로드";
-    saveButton.id = "downloadLink";
+    const downloadId = `downloadLink${Date.now()}`; // 고유한 ID 생성
+    saveButton.id = downloadId;
     saveButton.addEventListener("click", () => {
-      downloadImage(url);
+      downloadImage(url, downloadId);
     });
 
     const editButton = document.createElement("a");
@@ -69,11 +69,11 @@ function createImage(callback) {
   });
 }
 
-function downloadImage(url) {
+function downloadImage(url, downloadId) {
   fetch(url)
     .then((response) => response.blob())
     .then((blob) => {
-      const downloadLink = document.getElementById("downloadLink");
+      const downloadLink = document.getElementById(downloadId);
       downloadLink.href = URL.createObjectURL(blob);
       downloadLink.download = "";
     })
