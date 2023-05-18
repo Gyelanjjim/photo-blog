@@ -2,6 +2,7 @@ const generateBtn = document.querySelector("#generateBtn");
 const gridContainer = document.querySelector("#gridContainer");
 const progressBar = document.querySelector("#progressBar");
 const max = 8;
+const moveBtn = document.querySelector("#moveBtn");
 
 generateBtn.addEventListener("click", () => {
   const gridConLength = gridContainer.children.length;
@@ -32,10 +33,12 @@ generateBtn.addEventListener("click", () => {
 function createImage(callback) {
   const imgContainer = document.createElement("div");
   imgContainer.classList.add("imgContainer");
+
   const img = document.createElement("img");
   const randomNumber = Math.floor(Math.random() * 1000) + 1;
   const url = `https://picsum.photos/id/${randomNumber}/1536/804?random=${Date.now()}`;
   img.src = url;
+
   img.addEventListener("load", () => {
     imgContainer.appendChild(img);
 
@@ -51,18 +54,32 @@ function createImage(callback) {
       downloadImage(url, downloadId);
     });
 
-    const editButton = document.createElement("a");
-    editButton.className = "btn";
-    editButton.textContent = "수정";
+    const copyButton = document.createElement("a");
+    copyButton.className = "btn";
+    copyButton.textContent = "URL 복사";
+    copyButton.id = downloadId;
+    copyButton.addEventListener("click", () => {
+      const imageURL = url;
+      navigator.clipboard
+        .writeText(imageURL)
+        .then(() => {
+          console.log(`Copied: ${imageURL}`);
+          copyButton.textContent = "복사 완료";
+        })
+        .catch(() => {
+          console.error("Failed to copy image URL.");
+        });
+    });
 
     actionsContainer.appendChild(saveButton);
-    actionsContainer.appendChild(editButton);
+    actionsContainer.appendChild(copyButton);
     imgContainer.appendChild(actionsContainer);
 
     gridContainer.appendChild(imgContainer);
 
     callback();
   });
+
   img.addEventListener("error", () => {
     img.remove();
     createImage(callback);
@@ -75,7 +92,8 @@ function downloadImage(url, downloadId) {
     .then((blob) => {
       const downloadLink = document.getElementById(downloadId);
       downloadLink.href = URL.createObjectURL(blob);
-      downloadLink.download = "";
+      const jpgName = `${Date.now()}.jpg`;
+      downloadLink.download = jpgName;
     })
     .catch((error) => {
       console.error("Error occurred while downloading the image:", error);
@@ -85,3 +103,7 @@ function downloadImage(url, downloadId) {
 function updateProgressBar(percentage) {
   progressBar.style.width = `${percentage}%`;
 }
+
+moveBtn.addEventListener("click", () => {
+  window.open("https://wonkooklee.github.io/thumbnail_maker/", "_blank");
+});
